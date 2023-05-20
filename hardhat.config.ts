@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-foundry";
 import "@nomicfoundation/hardhat-toolbox";
+import "hardhat-gas-reporter";
 import * as envEnc from "@chainlink/env-enc";
 envEnc.config();
 
@@ -25,7 +26,7 @@ const config: HardhatUserConfig = {
       optimizer: {
         enabled: true,
         // Need to figure out what the right runs value is, contract size (more runs, bigger contract payload) vs code achieve maximum efficiency.
-        runs: 1_000,
+        runs: 200,
       },
     },
   },
@@ -62,9 +63,16 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY || "UNSET",
+      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY || "",
     },
   },
+  gasReporter: {
+    enabled: true,
+    currency: "EUR",
+    noColors: false,
+    coinmarketcap: process.env.COIN_MARKETCAP_API_KEY || "",
+    token: "AVAX"
+  }
 };
 
 export default config;

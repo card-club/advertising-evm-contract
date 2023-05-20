@@ -1,7 +1,8 @@
-# HARDHAT .gitignore
+# vscode
+.vscode
 
+# HARDHAT .gitignore
 node_modules
-.env
 coverage
 coverage.json
 typechain
@@ -27,3 +28,9 @@ docs/
 
 # Dotenv file
 .env
+
+# These environment variables are encrypted, but should not be pushed unless a secure password is used
+.env.enc
+
+# Chainlink Functions request artifacts
+.chainlink_functions

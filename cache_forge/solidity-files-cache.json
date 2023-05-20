@@ -6,10 +6,7 @@
     "sources": "contracts",
     "tests": "test",
     "scripts": "script",
-    "libraries": [
-      "lib",
-      "node_modules"
-    ]
+    "libraries": ["lib", "node_modules"]
   },
   "files": {
     "contracts/Lock.sol": {
@@ -28,9 +25,7 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
+              "": ["ast"],
               "*": [
                 "abi",
                 "evm.bytecode",

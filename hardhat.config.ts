@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-foundry";
 import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-gas-reporter";
+import "hardhat-contract-sizer";
 import * as envEnc from "@chainlink/env-enc";
 envEnc.config();
 
@@ -72,6 +73,13 @@ const config: HardhatUserConfig = {
     noColors: false,
     coinmarketcap: process.env.COIN_MARKETCAP_API_KEY || "",
     token: "AVAX"
+  },
+  contractSizer: {
+    alphaSort: true,
+    disambiguatePaths: false,
+    runOnCompile: true,
+    strict: true,
+    only: ['Lock'],
   }
 };
 

@@ -1,14 +1,9 @@
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-foundry";
-import "@nomicfoundation/hardhat-toolbox";
-import "hardhat-gas-reporter";
-import "hardhat-contract-sizer";
-import * as envEnc from "@chainlink/env-enc";
-envEnc.config();
-
-const DEFAULT_VERIFICATION_BLOCK_CONFIRMATIONS = 2;
-const SHARED_DON_PUBLIC_KEY =
-  "a30264e813edc9927f73e036b7885ee25445b836979cb00ef112bc644bd16de2db866fa74648438b34f52bb196ffa386992e94e0a3dc6913cee52e2e98f1619c";
+require("@nomicfoundation/hardhat-foundry");
+require("@nomicfoundation/hardhat-toolbox")
+require("hardhat-contract-sizer")
+require("@openzeppelin/hardhat-upgrades")
+require("./tasks")
+require("@chainlink/env-enc").config()
 
 const isTestEnvironment = process.env.npm_lifecycle_event == "test";
 
@@ -19,17 +14,34 @@ if (!isTestEnvironment && !PRIVATE_KEY) {
   );
 }
 
-const config: HardhatUserConfig = {
+const SOLC_SETTINGS = {
+  optimizer: {
+    enabled: true,
+    runs: 1_000,
+  },
+}
+
+module.exports = {
   defaultNetwork: "hardhat",
   solidity: {
-    version: "0.8.18",
-    settings: {
-      optimizer: {
-        enabled: true,
-        // Need to figure out what the right runs value is, contract size (more runs, bigger contract payload) vs code achieve maximum efficiency.
-        runs: 200,
+    compilers: [
+      {
+        version: "0.8.7",
+        settings: SOLC_SETTINGS,
       },
-    },
+      {
+        version: "0.7.0",
+        settings: SOLC_SETTINGS,
+      },
+      {
+        version: "0.6.6",
+        settings: SOLC_SETTINGS,
+      },
+      {
+        version: "0.4.24",
+        settings: SOLC_SETTINGS,
+      },
+    ],
   },
   networks: {
     hardhat: {
@@ -72,15 +84,13 @@ const config: HardhatUserConfig = {
     currency: "EUR",
     noColors: false,
     coinmarketcap: process.env.COIN_MARKETCAP_API_KEY || "",
-    token: "AVAX"
+    token: "AVAX",
   },
   contractSizer: {
     alphaSort: true,
     disambiguatePaths: false,
     runOnCompile: true,
     strict: true,
-    only: ['Lock'],
-  }
+    only: [],
+  },
 };
-
-export default config;

@@ -1,7 +1,9 @@
-import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
-import { expect } from "chai";
-import { ethers } from "hardhat";
+const {
+  time,
+  loadFixture,
+} = require("@nomicfoundation/hardhat-network-helpers");
+const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
+const { expect } = require("chai");
 
 describe("Lock", function () {
   // We define a fixture to reuse the same setup in every test.
@@ -75,7 +77,7 @@ describe("Lock", function () {
         await time.increaseTo(unlockTime);
 
         // We use lock.connect() to send a transaction from another account
-        expect(lock.connect(otherAccount).withdraw()).to.be.revertedWith(
+        await expect(lock.connect(otherAccount).withdraw()).to.be.revertedWith(
           "You aren't the owner"
         );
       });

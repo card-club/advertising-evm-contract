@@ -1,6 +1,7 @@
 const readline = require("readline")
 const chalk = require("chalk")
 const { getPriceUSD } = require("./price")
+const { networks } = require("../networks")
 
 function ask(query) {
   const rl = readline.createInterface({
@@ -35,7 +36,7 @@ async function promptTxCost(gasEstimate, hre, skipPrompt = false) {
     network.config.nativeCurrencyDecimals
   )
   const signer = await hre.ethers.getSigner()
-  const nativePriceUSD = await getPriceUSD(network.config.linkPriceFeed, hre.ethers)
+  const nativePriceUSD = await getPriceUSD(networks.avalancheFuji.linkPriceFeed, hre.ethers)
   const transactionEstimateUSD = transactionEstimateNative * nativePriceUSD
 
   console.log(`Estimating cost if the current gas price remains the same...\n`)

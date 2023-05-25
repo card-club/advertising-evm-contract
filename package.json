@@ -12,7 +12,6 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-foundry": "^1.0.1",
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "@openzeppelin/hardhat-upgrades": "^1.26.0",
     "axios": "^1.4.0",

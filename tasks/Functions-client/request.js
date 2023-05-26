@@ -142,6 +142,7 @@ task(
     }
 
     const transactionEstimateGas = await clientContract.estimateGas.purchaseAd(
+      hre.ethers.utils.parseEther("1"),
       requestConfig.source,
       requestConfig.secrets && Object.keys(requestConfig.secrets).length > 0
         ? simulatedSecretsURLBytes
@@ -319,6 +320,7 @@ task(
       try {
         // Initiate the on-chain request after all listeners are initialized
         requestTx = await clientContract.purchaseAd(
+          hre.ethers.utils.parseEther("1"),
           request.source,
           request.secrets ?? [],
           request.args ?? [],

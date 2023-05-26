@@ -5,6 +5,12 @@ import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 // import "@chainlink/contracts/src/v0.8/dev/functions/FunctionsClient.sol"; // Once published
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/interfaces/IERC1363.sol";
+
+error CardClub_LinkAmountToLow();
+error CardClub_payLinkForAdFailed();
+error CardClub_payLinkForRegistryFailed();
 
 contract CardClub is FunctionsClient, ConfirmedOwner {
     using Functions for Functions.Request;
@@ -12,7 +18,9 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
     bytes32 public latestRequestId;
     bytes public latestResponse;
     bytes public latestError;
-    address constant linkAddress = 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
+
+    address internal constant linkAddress = 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
+    uint256 internal constant LINK_DIVISIBILITY = 10**18;
 
     event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
@@ -38,13 +46,27 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
      * @return Functions request ID
      */
     function purchaseAd(
+        uint256 link_amount,
         string calldata source,
         bytes calldata secrets,
         string[] calldata args,
         uint64 subscriptionId,
         uint32 gasLimit
-    ) public returns (bytes32) {
-        // TODO: require that enough LINK has been sent to pay for the request
+    ) public payable returns (bytes32) {
+        // Purchase Ad amount should be at least 1 LINK
+        if (link_amount < LINK_DIVISIBILITY) revert CardClub_LinkAmountToLow();
+        bool success = IERC20(linkAddress).transferFrom(
+            msg.sender,
+            address(this),
+            link_amount
+        );
+        if (!success) revert CardClub_payLinkForAdFailed();
+
+        // Fund subscription  
+        bool success2 = IERC1363(linkAddress).transferAndCall(0x452C33Cef9Bc773267Ac5F8D85c1Aca2bA4bcf0C, link_amount, abi.encode(subscriptionId));
+
+        if (!success2) revert CardClub_payLinkForRegistryFailed();
+
         Functions.Request memory req;
         req.initializeRequest(
             Functions.Location.Inline,

@@ -85,6 +85,7 @@ task(
       // Initiate the request from the client contract
       const clientContract = await clientFactory.attach(client.address);
       const requestTx = await clientContract.purchaseAd(
+        hre.ethers.utils.parseEther("1"),
         request.source,
         request.secrets ?? [],
         request.args ?? [],

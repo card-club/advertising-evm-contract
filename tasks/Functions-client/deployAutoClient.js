@@ -3,10 +3,7 @@ const { networks } = require("../networks");
 const { addClientConsumerToSubscription } = require("../Functions-billing/add");
 const { setAutoRequest } = require("./setAutoRequest");
 
-task(
-  "functions-deploy-auto-client",
-  "Deploys the AutomatedFunctionsConsumer contract"
-)
+task("functions-deploy-auto-client", "Deploys the AutomatedCardClub contract")
   .addParam(
     "subid",
     "Billing subscription ID used to pay for Functions requests"
@@ -44,7 +41,7 @@ task(
   .setAction(async (taskArgs) => {
     if (network.name === "hardhat") {
       throw Error(
-        'This command cannot be used on a local hardhat chain.  Specify a valid network or simulate an FunctionsConsumer request locally with "npx hardhat functions-simulate".'
+        'This command cannot be used on a local hardhat chain.  Specify a valid network or simulate an CardClub request locally with "npx hardhat functions-simulate".'
       );
     }
 
@@ -52,15 +49,13 @@ task(
       throw Error("Gas limit must be less than or equal to 300,000");
     }
 
-    console.log(
-      `Deploying AutomatedFunctionsConsumer contract to ${network.name}`
-    );
+    console.log(`Deploying AutomatedCardClub contract to ${network.name}`);
 
     console.log("\n__Compiling Contracts__");
     await run("compile");
 
     const autoClientContractFactory = await ethers.getContractFactory(
-      "AutomatedFunctionsConsumer"
+      "AutomatedCardClub"
     );
     const autoClientContract = await autoClientContractFactory.deploy(
       networks[network.name]["functionsOracleProxy"],
@@ -122,6 +117,6 @@ task(
     }
 
     console.log(
-      `\nAutomatedFunctionsConsumer contract deployed to ${autoClientContract.address} on ${network.name}`
+      `\nAutomatedCardClub contract deployed to ${autoClientContract.address} on ${network.name}`
     );
   });

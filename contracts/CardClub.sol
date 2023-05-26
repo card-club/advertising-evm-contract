@@ -4,13 +4,15 @@ pragma solidity ^0.8.7;
 import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 // import "@chainlink/contracts/src/v0.8/dev/functions/FunctionsClient.sol"; // Once published
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 
-contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
+contract CardClub is FunctionsClient, ConfirmedOwner {
     using Functions for Functions.Request;
 
     bytes32 public latestRequestId;
     bytes public latestResponse;
     bytes public latestError;
+    address constant linkAddress = 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
 
     event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
@@ -35,7 +37,7 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
      * @param gasLimit Maximum amount of gas used to call the client contract's `handleOracleFulfillment` function
      * @return Functions request ID
      */
-    function executeRequest(
+    function purchaseAd(
         string calldata source,
         bytes calldata secrets,
         string[] calldata args,
@@ -83,7 +85,7 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
     function withdrawLink() external onlyOwner {
         LinkTokenInterface link = LinkTokenInterface(linkAddress);
         require(
-            link.transfer(s_owner, link.balanceOf(address(this))),
+            link.transfer(msg.sender, link.balanceOf(address(this))),
             "Unable to transfer"
         );
     }

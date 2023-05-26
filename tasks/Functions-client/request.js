@@ -31,7 +31,7 @@ task(
   )
   .addOptionalParam(
     "requestgas",
-    "Gas limit for calling the executeRequest function",
+    "Gas limit for calling the purchaseAd function",
     1_500_000,
     types.int
   )
@@ -63,9 +63,7 @@ task(
     }
 
     // Attach to the required contracts
-    const clientContractFactory = await ethers.getContractFactory(
-      "FunctionsConsumer"
-    );
+    const clientContractFactory = await ethers.getContractFactory("CardClub");
     const clientContract = clientContractFactory.attach(contractAddr);
     const OracleFactory = await ethers.getContractFactory(
       "contracts/dev/functions/FunctionsOracle.sol:FunctionsOracle"
@@ -143,17 +141,16 @@ task(
       );
     }
 
-    const transactionEstimateGas =
-      await clientContract.estimateGas.executeRequest(
-        requestConfig.source,
-        requestConfig.secrets && Object.keys(requestConfig.secrets).length > 0
-          ? simulatedSecretsURLBytes
-          : [],
-        requestConfig.args ?? [],
-        subscriptionId,
-        gasLimit,
-        overrides
-      );
+    const transactionEstimateGas = await clientContract.estimateGas.purchaseAd(
+      requestConfig.source,
+      requestConfig.secrets && Object.keys(requestConfig.secrets).length > 0
+        ? simulatedSecretsURLBytes
+        : [],
+      requestConfig.args ?? [],
+      subscriptionId,
+      gasLimit,
+      overrides
+    );
 
     await utils.promptTxCost(transactionEstimateGas, hre, true);
 
@@ -182,7 +179,7 @@ task(
     );
 
     const spinner = utils.spin({
-      text: `Submitting transaction for FunctionsConsumer contract ${contractAddr} on network ${network.name}`,
+      text: `Submitting transaction for CardClub contract ${contractAddr} on network ${network.name}`,
     });
 
     // Use a promise to wait & listen for the fulfillment event before returning
@@ -321,7 +318,7 @@ task(
       let requestTx;
       try {
         // Initiate the on-chain request after all listeners are initialized
-        requestTx = await clientContract.executeRequest(
+        requestTx = await clientContract.purchaseAd(
           request.source,
           request.secrets ?? [],
           request.args ?? [],

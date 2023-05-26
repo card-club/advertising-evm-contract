@@ -4,7 +4,7 @@ const process = require("process");
 
 task(
   "functions-read",
-  "Reads the latest response (or error) returned to a FunctionsConsumer or AutomatedFunctionsConsumer client contract"
+  "Reads the latest response (or error) returned to a CardClub or AutomatedCardClub client contract"
 )
   .addParam("contract", "Address of the client contract to read")
   .addOptionalParam(
@@ -16,16 +16,14 @@ task(
   .setAction(async (taskArgs) => {
     if (network.name === "hardhat") {
       throw Error(
-        'This command cannot be used on a local hardhat chain.  Specify a valid network or simulate an FunctionsConsumer request locally with "npx hardhat functions-simulate".'
+        'This command cannot be used on a local hardhat chain.  Specify a valid network or simulate an CardClub request locally with "npx hardhat functions-simulate".'
       );
     }
 
     console.log(
       `Reading data from Functions client contract ${taskArgs.contract} on network ${network.name}`
     );
-    const clientContractFactory = await ethers.getContractFactory(
-      "FunctionsConsumer"
-    );
+    const clientContractFactory = await ethers.getContractFactory("CardClub");
     const clientContract = await clientContractFactory.attach(
       taskArgs.contract
     );

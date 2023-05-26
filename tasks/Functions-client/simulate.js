@@ -10,7 +10,7 @@ const process = require("process");
 
 task(
   "functions-simulate",
-  "Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract"
+  "Simulates an end-to-end fulfillment locally for the CardClub contract"
 )
   .addOptionalParam(
     "gaslimit",
@@ -43,7 +43,7 @@ task(
     // Deploy a mock oracle & registry contract to simulate a fulfillment
     const { oracle, registry, linkToken } = await deployMockOracle();
     // Deploy the client contract
-    const clientFactory = await ethers.getContractFactory("FunctionsConsumer");
+    const clientFactory = await ethers.getContractFactory("CardClub");
     const client = await clientFactory.deploy(oracle.address);
     await client.deployTransaction.wait(1);
 
@@ -84,7 +84,7 @@ task(
     await new Promise(async (resolve) => {
       // Initiate the request from the client contract
       const clientContract = await clientFactory.attach(client.address);
-      const requestTx = await clientContract.executeRequest(
+      const requestTx = await clientContract.purchaseAd(
         request.source,
         request.secrets ?? [],
         request.args ?? [],
@@ -199,7 +199,7 @@ const getGasUsedForFulfillRequest = async (success, result) => {
   const simulatedRequestId =
     "0x0000000000000000000000000000000000000000000000000000000000000001";
 
-  const clientFactory = await ethers.getContractFactory("FunctionsConsumer");
+  const clientFactory = await ethers.getContractFactory("CardClub");
   const client = await clientFactory.deploy(deployer.address);
   client.addSimulatedRequestId(deployer.address, simulatedRequestId);
   await client.deployTransaction.wait(1);

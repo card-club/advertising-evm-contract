@@ -9,7 +9,7 @@ const process = require("process");
 
 task(
   "functions-set-auto-request",
-  "Updates the Functions request in a deployed AutomatedFunctionsConsumer contract"
+  "Updates the Functions request in a deployed AutomatedCardClub contract"
 )
   .addParam("contract", "Address of the client contract")
   .addParam(
@@ -45,7 +45,7 @@ task(
   .setAction(async (taskArgs) => {
     if (network.name === "hardhat") {
       throw Error(
-        'This command cannot be used on a local hardhat chain.  Specify a valid network or simulate an FunctionsConsumer request locally with "npx hardhat functions-simulate".'
+        'This command cannot be used on a local hardhat chain.  Specify a valid network or simulate an CardClub request locally with "npx hardhat functions-simulate".'
       );
     }
 
@@ -58,11 +58,11 @@ const setAutoRequest = async (contract, taskArgs) => {
   }
 
   console.log(
-    `Setting the Functions request in AutomatedFunctionsConsumer contract ${contract} on ${network.name}`
+    `Setting the Functions request in AutomatedCardClub contract ${contract} on ${network.name}`
   );
 
   const autoClientContractFactory = await ethers.getContractFactory(
-    "AutomatedFunctionsConsumer"
+    "AutomatedCardClub"
   );
   const autoClientContract = await autoClientContractFactory.attach(contract);
 
@@ -158,7 +158,7 @@ const setAutoRequest = async (contract, taskArgs) => {
   console.log(
     `\n${
       create ? "Created new" : "Updated"
-    } Functions request in AutomatedFunctionsConsumer contract ${
+    } Functions request in AutomatedCardClub contract ${
       autoClientContract.address
     } on ${network.name}`
   );

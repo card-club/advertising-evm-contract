@@ -1,7 +1,7 @@
 const { types } = require("hardhat/config");
 const { networks } = require("../networks");
 
-task("functions-deploy-client", "Deploys the FunctionsConsumer contract")
+task("functions-deploy-client", "Deploys the CardClub contract")
   .addOptionalParam(
     "verify",
     "Set to true to verify client contract",
@@ -11,20 +11,18 @@ task("functions-deploy-client", "Deploys the FunctionsConsumer contract")
   .setAction(async (taskArgs) => {
     if (network.name === "hardhat") {
       throw Error(
-        'This command cannot be used on a local hardhat chain.  Specify a valid network or simulate an FunctionsConsumer request locally with "npx hardhat functions-simulate".'
+        'This command cannot be used on a local hardhat chain.  Specify a valid network or simulate an CardClub request locally with "npx hardhat functions-simulate".'
       );
     }
 
-    console.log(`Deploying FunctionsConsumer contract to ${network.name}`);
+    console.log(`Deploying CardClub contract to ${network.name}`);
 
     const oracleAddress = networks[network.name]["functionsOracleProxy"];
 
     console.log("\n__Compiling Contracts__");
     await run("compile");
 
-    const clientContractFactory = await ethers.getContractFactory(
-      "FunctionsConsumer"
-    );
+    const clientContractFactory = await ethers.getContractFactory("CardClub");
     const clientContract = await clientContractFactory.deploy(oracleAddress);
 
     console.log(
@@ -72,6 +70,6 @@ task("functions-deploy-client", "Deploys the FunctionsConsumer contract")
     }
 
     console.log(
-      `\nFunctionsConsumer contract deployed to ${clientContract.address} on ${network.name}`
+      `\nCardClub contract deployed to ${clientContract.address} on ${network.name}`
     );
   });

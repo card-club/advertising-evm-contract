@@ -11,16 +11,17 @@ import "@openzeppelin/contracts/interfaces/IERC1363.sol";
 error CardClub_LinkAmountToLow();
 error CardClub_payLinkForAdFailed();
 error CardClub_payLinkForRegistryFailed();
+error CardClub_refundFailedContactUs();
 
 contract CardClub is FunctionsClient, ConfirmedOwner {
     using Functions for Functions.Request;
 
-    bytes32 public latestRequestId;
-    bytes public latestResponse;
-    bytes public latestError;
+    address internal constant linkAddress =
+        0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
+    uint256 internal constant LINK_DIVISIBILITY = 10 ** 18;
 
-    address internal constant linkAddress = 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
-    uint256 internal constant LINK_DIVISIBILITY = 10**18;
+    mapping(bytes32 => address) public requests_wallet_address;
+    mapping(bytes32 => uint256) public requests_link_amount;
 
     event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
@@ -62,8 +63,12 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         );
         if (!success) revert CardClub_payLinkForAdFailed();
 
-        // Fund subscription  
-        bool success2 = IERC1363(linkAddress).transferAndCall(0x452C33Cef9Bc773267Ac5F8D85c1Aca2bA4bcf0C, link_amount, abi.encode(subscriptionId));
+        // Fund subscription
+        bool success2 = IERC1363(linkAddress).transferAndCall(
+            0x452C33Cef9Bc773267Ac5F8D85c1Aca2bA4bcf0C,
+            link_amount,
+            abi.encode(subscriptionId)
+        );
 
         if (!success2) revert CardClub_payLinkForRegistryFailed();
 
@@ -79,7 +84,8 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         if (args.length > 0) req.addArgs(args);
 
         bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
-        latestRequestId = assignedReqID;
+        requests_wallets[assignedReqID] = msg.sender;
+        requests_link_amount[assignedReqID] = link_amount;
         return assignedReqID;
     }
 
@@ -96,8 +102,16 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         bytes memory response,
         bytes memory err
     ) internal override {
-        latestResponse = response;
-        latestError = err;
+        if (err.length > 0) {
+            // Refund link
+            bool success = IERC20(linkAddress).transferFrom(
+                address(this),
+                msg.sender,
+                link_amount
+            );
+            if (!success) revert CardClub_refundFailedContactUs();
+        }
+
         emit OCRResponse(requestId, response, err);
     }
 

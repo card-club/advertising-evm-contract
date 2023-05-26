@@ -4,19 +4,21 @@
 // Price feeds addresses: https://docs.chain.link/data-feeds/price-feeds/addresses
 // Chain IDs: https://chainlist.org/?testnets=true
 
-require("@chainlink/env-enc").config()
+require("@chainlink/env-enc").config();
 
-const DEFAULT_VERIFICATION_BLOCK_CONFIRMATIONS = 2
+const DEFAULT_VERIFICATION_BLOCK_CONFIRMATIONS = 2;
 const SHARED_DON_PUBLIC_KEY =
-  "a30264e813edc9927f73e036b7885ee25445b836979cb00ef112bc644bd16de2db866fa74648438b34f52bb196ffa386992e94e0a3dc6913cee52e2e98f1619c"
+  "a30264e813edc9927f73e036b7885ee25445b836979cb00ef112bc644bd16de2db866fa74648438b34f52bb196ffa386992e94e0a3dc6913cee52e2e98f1619c";
 
-const npmCommand = process.env.npm_lifecycle_event
-const isTestEnvironment = npmCommand == "test" || npmCommand == "test:unit"
+const npmCommand = process.env.npm_lifecycle_event;
+const isTestEnvironment = npmCommand == "test" || npmCommand == "test:unit";
 
 // Set EVM private key (required)
-const PRIVATE_KEY = process.env.PRIVATE_KEY
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 if (!isTestEnvironment && !PRIVATE_KEY) {
-  throw Error("Set the PRIVATE_KEY environment variable with your EVM wallet private key")
+  throw Error(
+    "Set the PRIVATE_KEY environment variable with your EVM wallet private key"
+  );
 }
 
 const networks = {
@@ -34,9 +36,9 @@ const networks = {
     functionsBillingRegistryProxy: "0x452C33Cef9Bc773267Ac5F8D85c1Aca2bA4bcf0C",
     functionsPublicKey: SHARED_DON_PUBLIC_KEY,
   },
-}
+};
 
 module.exports = {
   networks,
   SHARED_DON_PUBLIC_KEY,
-}
+};

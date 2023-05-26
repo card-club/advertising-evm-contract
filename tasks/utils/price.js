@@ -1,5 +1,5 @@
 function numberWithCommas(x) {
-  return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+  return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 }
 
 async function getPriceUSD(address, ethers) {
@@ -28,13 +28,13 @@ async function getPriceUSD(address, ethers) {
       },
     ],
     ethers.provider
-  )
-  const decimals = await priceFeed.decimals()
-  const latestRound = await priceFeed.latestRoundData()
-  return ethers.utils.formatUnits(latestRound.answer, decimals)
+  );
+  const decimals = await priceFeed.decimals();
+  const latestRound = await priceFeed.latestRoundData();
+  return ethers.utils.formatUnits(latestRound.answer, decimals);
 }
 
 module.exports = {
   numberWithCommas,
   getPriceUSD,
-}
+};

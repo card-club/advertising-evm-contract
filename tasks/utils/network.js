@@ -5,7 +5,7 @@ const BASE_URLS = {
   80001: "https://mumbai.polygonscan.com/",
   11155111: "https://sepolia.etherscan.io/",
   43113: "https://testnet.snowtrace.io/",
-}
+};
 
 /**
  * Returns the Etherscan API domain for a given chainId.
@@ -13,13 +13,13 @@ const BASE_URLS = {
  * @param chainId Ethereum chain ID
  */
 function getEtherscanURL(chainId) {
-  const idNotFound = !Object.keys(BASE_URLS).includes(chainId.toString())
+  const idNotFound = !Object.keys(BASE_URLS).includes(chainId.toString());
   if (idNotFound) {
-    throw new Error("Invalid chain Id")
+    throw new Error("Invalid chain Id");
   }
-  return BASE_URLS[chainId]
+  return BASE_URLS[chainId];
 }
 
 module.exports = {
   getEtherscanURL,
-}
+};

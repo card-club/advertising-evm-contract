@@ -1,50 +1,65 @@
-const { networks } = require("../networks")
+const { networks } = require("../networks");
 
-task("functions-sub-fund", "Funds a billing subscription for Functions consumer contracts")
+task(
+  "functions-sub-fund",
+  "Funds a billing subscription for Functions consumer contracts"
+)
   .addParam("amount", "Amount to fund subscription in LINK")
   .addParam("subid", "Subscription ID to fund")
   .setAction(async (taskArgs) => {
     if (network.name === "hardhat") {
-      throw Error("This command cannot be used on a local hardhat chain.  Specify a valid network.")
+      throw Error(
+        "This command cannot be used on a local hardhat chain.  Specify a valid network."
+      );
     }
 
-    const subscriptionId = taskArgs.subid
-    const linkAmount = taskArgs.amount
+    const subscriptionId = taskArgs.subid;
+    const linkAmount = taskArgs.amount;
 
     const RegistryFactory = await ethers.getContractFactory(
       "contracts/dev/functions/FunctionsBillingRegistry.sol:FunctionsBillingRegistry"
-    )
-    const registry = await RegistryFactory.attach(networks[network.name]["functionsBillingRegistryProxy"])
+    );
+    const registry = await RegistryFactory.attach(
+      networks[network.name]["functionsBillingRegistryProxy"]
+    );
 
     // Check that the subscription is valid
-    let preSubInfo
+    let preSubInfo;
     try {
-      preSubInfo = await registry.getSubscription(subscriptionId)
+      preSubInfo = await registry.getSubscription(subscriptionId);
     } catch (error) {
       if (error.errorName === "InvalidSubscription") {
-        throw Error(`Subscription ID "${subscriptionId}" is invalid or does not exist`)
+        throw Error(
+          `Subscription ID "${subscriptionId}" is invalid or does not exist`
+        );
       }
-      throw error
+      throw error;
     }
 
     // Convert LINK to Juels
-    const juelsAmount = ethers.utils.parseUnits(linkAmount)
-    console.log(`Funding subscription ${subscriptionId} with ${ethers.utils.formatEther(juelsAmount)} LINK`)
+    const juelsAmount = ethers.utils.parseUnits(linkAmount);
+    console.log(
+      `Funding subscription ${subscriptionId} with ${ethers.utils.formatEther(
+        juelsAmount
+      )} LINK`
+    );
 
-    const LinkTokenFactory = await ethers.getContractFactory("LinkToken")
-    const linkToken = await LinkTokenFactory.attach(networks[network.name].linkToken)
+    const LinkTokenFactory = await ethers.getContractFactory("LinkToken");
+    const linkToken = await LinkTokenFactory.attach(
+      networks[network.name].linkToken
+    );
 
-    const accounts = await ethers.getSigners()
-    const signer = accounts[0]
+    const accounts = await ethers.getSigners();
+    const signer = accounts[0];
 
     // Ensure sufficient balance
-    const balance = await linkToken.balanceOf(signer.address)
+    const balance = await linkToken.balanceOf(signer.address);
     if (juelsAmount.gt(balance)) {
       throw Error(
         `Insufficient LINK balance. Trying to fund subscription with ${ethers.utils.formatEther(
           juelsAmount
         )} LINK, but wallet only has ${ethers.utils.formatEther(balance)}.`
-      )
+      );
     }
 
     // Fund the subscription with LINK
@@ -52,16 +67,20 @@ task("functions-sub-fund", "Funds a billing subscription for Functions consumer 
       networks[network.name]["functionsBillingRegistryProxy"],
       juelsAmount,
       ethers.utils.defaultAbiCoder.encode(["uint64"], [subscriptionId])
-    )
+    );
 
     console.log(
-      `Waiting ${networks[network.name].confirmations} blocks for transaction ${fundTx.hash} to be confirmed...`
-    )
-    await fundTx.wait(networks[network.name].confirmations)
+      `Waiting ${networks[network.name].confirmations} blocks for transaction ${
+        fundTx.hash
+      } to be confirmed...`
+    );
+    await fundTx.wait(networks[network.name].confirmations);
 
-    const postSubInfo = await registry.getSubscription(subscriptionId)
+    const postSubInfo = await registry.getSubscription(subscriptionId);
 
     console.log(
-      `\nSubscription ${subscriptionId} has a total balance of ${ethers.utils.formatEther(postSubInfo[0])} LINK`
-    )
-  })
+      `\nSubscription ${subscriptionId} has a total balance of ${ethers.utils.formatEther(
+        postSubInfo[0]
+      )} LINK`
+    );
+  });

@@ -1,8 +1,8 @@
-require("@nomicfoundation/hardhat-toolbox")
-require("hardhat-contract-sizer")
-require("@openzeppelin/hardhat-upgrades")
-require("./tasks")
-require("@chainlink/env-enc").config()
+require("@nomicfoundation/hardhat-toolbox");
+require("hardhat-contract-sizer");
+require("@openzeppelin/hardhat-upgrades");
+require("./tasks");
+require("@chainlink/env-enc").config();
 
 const isTestEnvironment = process.env.npm_lifecycle_event == "test";
 
@@ -18,7 +18,7 @@ const SOLC_SETTINGS = {
     enabled: true,
     runs: 1_000,
   },
-}
+};
 
 module.exports = {
   defaultNetwork: "hardhat",

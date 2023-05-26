@@ -1,6 +1,9 @@
-const { networks } = require("../networks")
+const { networks } = require("../networks");
 
-task("functions-perform-upkeep", "Manually call performUpkeep in an Automation compatible contract")
+task(
+  "functions-perform-upkeep",
+  "Manually call performUpkeep in an Automation compatible contract"
+)
   .addParam("contract", "Address of the contract to call")
   .addOptionalParam(
     "data",
@@ -11,30 +14,41 @@ task("functions-perform-upkeep", "Manually call performUpkeep in an Automation c
     const overrides = {
       gasLimit: 1000000,
       gasPrice: networks[network.name].gasPrice,
-    }
+    };
 
     if (network.name === "hardhat") {
       throw Error(
         'This command cannot be used on a local hardhat chain.  Specify a valid network or simulate an FunctionsConsumer request locally with "npx hardhat functions-simulate".'
-      )
+      );
     }
 
-    const performData = taskArgs.data ?? []
+    const performData = taskArgs.data ?? [];
 
     console.log(
-      `Calling performUpkeep for Automation client contract ${taskArgs.contract} on network ${network.name}${
+      `Calling performUpkeep for Automation client contract ${
+        taskArgs.contract
+      } on network ${network.name}${
         taskArgs.data ? ` with data ${performData}` : ""
       }`
-    )
-    const autoClientContractFactory = await ethers.getContractFactory("AutomatedFunctionsConsumer")
-    const autoClientContract = await autoClientContractFactory.attach(taskArgs.contract)
+    );
+    const autoClientContractFactory = await ethers.getContractFactory(
+      "AutomatedFunctionsConsumer"
+    );
+    const autoClientContract = await autoClientContractFactory.attach(
+      taskArgs.contract
+    );
 
-    const checkUpkeep = await autoClientContract.performUpkeep(performData, overrides)
+    const checkUpkeep = await autoClientContract.performUpkeep(
+      performData,
+      overrides
+    );
 
     console.log(
-      `Waiting ${networks[network.name].confirmations} blocks for transaction ${checkUpkeep.hash} to be confirmed...`
-    )
-    await checkUpkeep.wait(networks[network.name].confirmations)
+      `Waiting ${networks[network.name].confirmations} blocks for transaction ${
+        checkUpkeep.hash
+      } to be confirmed...`
+    );
+    await checkUpkeep.wait(networks[network.name].confirmations);
 
-    console.log(`\nSuccessfully called performUpkeep`)
-  })
+    console.log(`\nSuccessfully called performUpkeep`);
+  });

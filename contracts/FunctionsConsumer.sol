@@ -5,11 +5,6 @@ import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 // import "@chainlink/contracts/src/v0.8/dev/functions/FunctionsClient.sol"; // Once published
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-/**
- * @title Functions Consumer contract
- * @notice This contract is a demonstration of using Functions.
- * @notice NOT FOR PRODUCTION USE
- */
 contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
     using Functions for Functions.Request;
 
@@ -46,7 +41,8 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
         string[] calldata args,
         uint64 subscriptionId,
         uint32 gasLimit
-    ) public onlyOwner returns (bytes32) {
+    ) public returns (bytes32) {
+        // TODO: require that enough LINK has been sent to pay for the request
         Functions.Request memory req;
         req.initializeRequest(
             Functions.Location.Inline,
@@ -79,6 +75,17 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
         latestResponse = response;
         latestError = err;
         emit OCRResponse(requestId, response, err);
+    }
+
+    /**
+     * @notice Witdraws LINK from the contract to the Owner
+     */
+    function withdrawLink() external onlyOwner {
+        LinkTokenInterface link = LinkTokenInterface(linkAddress);
+        require(
+            link.transfer(s_owner, link.balanceOf(address(this))),
+            "Unable to transfer"
+        );
     }
 
     /**

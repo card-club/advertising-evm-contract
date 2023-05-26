@@ -1,12 +1,28 @@
-const { types } = require("hardhat/config")
-const { networks } = require("../networks")
-const { addClientConsumerToSubscription } = require("../Functions-billing/add")
-const { setAutoRequest } = require("./setAutoRequest")
+const { types } = require("hardhat/config");
+const { networks } = require("../networks");
+const { addClientConsumerToSubscription } = require("../Functions-billing/add");
+const { setAutoRequest } = require("./setAutoRequest");
 
-task("functions-deploy-auto-client", "Deploys the AutomatedFunctionsConsumer contract")
-  .addParam("subid", "Billing subscription ID used to pay for Functions requests")
-  .addOptionalParam("interval", "Update interval in seconds for Automation to call performUpkeep", 300, types.int)
-  .addOptionalParam("verify", "Set to true to verify client contract", false, types.boolean)
+task(
+  "functions-deploy-auto-client",
+  "Deploys the AutomatedFunctionsConsumer contract"
+)
+  .addParam(
+    "subid",
+    "Billing subscription ID used to pay for Functions requests"
+  )
+  .addOptionalParam(
+    "interval",
+    "Update interval in seconds for Automation to call performUpkeep",
+    300,
+    types.int
+  )
+  .addOptionalParam(
+    "verify",
+    "Set to true to verify client contract",
+    false,
+    types.boolean
+  )
   .addOptionalParam(
     "gaslimit",
     "Maximum amount of gas that can be used to call fulfillRequest in the client contract",
@@ -29,41 +45,56 @@ task("functions-deploy-auto-client", "Deploys the AutomatedFunctionsConsumer con
     if (network.name === "hardhat") {
       throw Error(
         'This command cannot be used on a local hardhat chain.  Specify a valid network or simulate an FunctionsConsumer request locally with "npx hardhat functions-simulate".'
-      )
+      );
     }
 
     if (taskArgs.gaslimit > 300000) {
-      throw Error("Gas limit must be less than or equal to 300,000")
+      throw Error("Gas limit must be less than or equal to 300,000");
     }
 
-    console.log(`Deploying AutomatedFunctionsConsumer contract to ${network.name}`)
+    console.log(
+      `Deploying AutomatedFunctionsConsumer contract to ${network.name}`
+    );
 
-    console.log("\n__Compiling Contracts__")
-    await run("compile")
+    console.log("\n__Compiling Contracts__");
+    await run("compile");
 
-    const autoClientContractFactory = await ethers.getContractFactory("AutomatedFunctionsConsumer")
+    const autoClientContractFactory = await ethers.getContractFactory(
+      "AutomatedFunctionsConsumer"
+    );
     const autoClientContract = await autoClientContractFactory.deploy(
       networks[network.name]["functionsOracleProxy"],
       taskArgs.subid,
       taskArgs.gaslimit,
       taskArgs.interval
-    )
+    );
 
-    console.log(`\nWaiting 1 block for transaction ${autoClientContract.deployTransaction.hash} to be confirmed...`)
-    await autoClientContract.deployTransaction.wait(1)
+    console.log(
+      `\nWaiting 1 block for transaction ${autoClientContract.deployTransaction.hash} to be confirmed...`
+    );
+    await autoClientContract.deployTransaction.wait(1);
 
-    await addClientConsumerToSubscription(taskArgs.subid, autoClientContract.address)
+    await addClientConsumerToSubscription(
+      taskArgs.subid,
+      autoClientContract.address
+    );
 
-    taskArgs.contract = autoClientContract.address
+    taskArgs.contract = autoClientContract.address;
 
-    await setAutoRequest(autoClientContract.address, taskArgs)
+    await setAutoRequest(autoClientContract.address, taskArgs);
 
-    const verifyContract = taskArgs.verify
+    const verifyContract = taskArgs.verify;
 
-    if (verifyContract && !!networks[network.name].verifyApiKey && networks[network.name].verifyApiKey !== "UNSET") {
+    if (
+      verifyContract &&
+      !!networks[network.name].verifyApiKey &&
+      networks[network.name].verifyApiKey !== "UNSET"
+    ) {
       try {
-        console.log("\nVerifying contract...")
-        await autoClientContract.deployTransaction.wait(Math.max(6 - networks[network.name].confirmations, 0))
+        console.log("\nVerifying contract...");
+        await autoClientContract.deployTransaction.wait(
+          Math.max(6 - networks[network.name].confirmations, 0)
+        );
         await run("verify:verify", {
           address: autoClientContract.address,
           constructorArguments: [
@@ -72,21 +103,25 @@ task("functions-deploy-auto-client", "Deploys the AutomatedFunctionsConsumer con
             taskArgs.gaslimit,
             taskArgs.interval,
           ],
-        })
-        console.log("Contract verified")
+        });
+        console.log("Contract verified");
       } catch (error) {
         if (!error.message.includes("Already Verified")) {
-          console.log("Error verifying contract.  Delete the build folder and try again.")
-          console.log(error)
+          console.log(
+            "Error verifying contract.  Delete the build folder and try again."
+          );
+          console.log(error);
         } else {
-          console.log("Contract already verified")
+          console.log("Contract already verified");
         }
       }
     } else if (verifyContract) {
       console.log(
         "\nPOLYGONSCAN_API_KEY, ETHERSCAN_API_KEY or SNOWTRACE_API_KEY is missing. Skipping contract verification..."
-      )
+      );
     }
 
-    console.log(`\nAutomatedFunctionsConsumer contract deployed to ${autoClientContract.address} on ${network.name}`)
-  })
+    console.log(
+      `\nAutomatedFunctionsConsumer contract deployed to ${autoClientContract.address} on ${network.name}`
+    );
+  });

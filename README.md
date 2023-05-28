@@ -55,3 +55,11 @@ Do request for ad purchase
 ```
 npx hardhat functions-request --network avalancheFuji --contract 0x8c689828298B0558d8FA6F8C48650f46561669cA --subid 19 --gaslimit 250000
 ```
+
+## Slither
+
+cd to the node_modules folder (reason: https://stackoverflow.com/questions/73287140/slither-cannot-find-the-dependency-with-openzeppelin) and run the following command:
+
+```
+SOLC_VERSION=0.8.18 slither ../contracts/CardClub.sol --exclude-dependencies
+```

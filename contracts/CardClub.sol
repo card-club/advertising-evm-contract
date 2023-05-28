@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.18;
 
 import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 // import "@chainlink/contracts/src/v0.8/dev/functions/FunctionsClient.sol"; // Once published
@@ -55,7 +55,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         string[] calldata args,
         uint64 subscriptionId,
         uint32 gasLimit
-    ) public payable returns (bytes32) {
+    ) public returns (bytes32) {
         // Purchase Ad amount should be at least 1 LINK
         if (linkAmount < LINK_DIVISIBILITY) revert CardClub_LinkAmountToLow();
         bool success = IERC20(linkAddress).transferFrom(

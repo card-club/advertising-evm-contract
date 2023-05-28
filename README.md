@@ -53,5 +53,5 @@ npx hardhat functions-sub-create --network avalancheFuji --amount 0.3 --contract
 Do request for ad purchase
 
 ```
-npx hardhat functions-request --network avalancheFuji --contract 0xCAd3956Bde4cd281c3E8393cA7f4bc38c5879176 --subid 19 --gaslimit 250000
+npx hardhat functions-request --network avalancheFuji --contract 0x8c689828298B0558d8FA6F8C48650f46561669cA --subid 19 --gaslimit 250000
 ```

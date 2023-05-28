@@ -16,8 +16,7 @@ error CardClub_refundFailedContactUs();
 contract CardClub is FunctionsClient, ConfirmedOwner {
     using Functions for Functions.Request;
 
-    address internal constant linkAddress =
-        0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
+    address internal linkAddress;
     uint256 internal constant LINK_DIVISIBILITY = 10 ** 18;
 
     mapping(bytes32 => address) public requests_wallet_address;
@@ -33,8 +32,11 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
     // https://github.com/protofire/solhint/issues/242
     // solhint-disable-next-line no-empty-blocks
     constructor(
-        address oracle
-    ) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {}
+        address oracle,
+        address linkTokenAddress
+    ) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {
+        linkAddress = linkTokenAddress;
+    }
 
     /**
      * @notice Send a simple request
@@ -84,7 +86,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         if (args.length > 0) req.addArgs(args);
 
         bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
-        requests_wallets[assignedReqID] = msg.sender;
+        requests_wallet_address[assignedReqID] = msg.sender;
         requests_link_amount[assignedReqID] = link_amount;
         return assignedReqID;
     }
@@ -107,7 +109,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
             bool success = IERC20(linkAddress).transferFrom(
                 address(this),
                 msg.sender,
-                link_amount
+                requests_link_amount[requestId]
             );
             if (!success) revert CardClub_refundFailedContactUs();
         }

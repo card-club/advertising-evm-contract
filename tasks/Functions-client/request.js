@@ -346,7 +346,7 @@ task(
         } for more details.`
       );
       spinner.stop();
-      requestId = requestTxReceipt.events[2].args.id;
+      requestId = requestTxReceipt.events[6].args.id;
       spinner.start(
         `Request ${requestId} has been initiated. Waiting for fulfillment from the Decentralized Oracle Network...\n`
       );

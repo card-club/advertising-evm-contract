@@ -44,7 +44,10 @@ task(
     const { oracle, registry, linkToken } = await deployMockOracle();
     // Deploy the client contract
     const clientFactory = await ethers.getContractFactory("CardClub");
-    const client = await clientFactory.deploy(oracle.address);
+    const client = await clientFactory.deploy(
+      oracle.address,
+      linkToken.address
+    );
     await client.deployTransaction.wait(1);
 
     const accounts = await ethers.getSigners();
@@ -82,8 +85,16 @@ task(
 
     // Make a request & simulate a fulfillment
     await new Promise(async (resolve) => {
-      // Initiate the request from the client contract
       const clientContract = await clientFactory.attach(client.address);
+
+      // approve linktoken for the client contract
+      const tx = await linkToken.approve(
+        clientContract.address,
+        ethers.constants.MaxUint256
+      );
+      await tx.wait();
+
+      // Initiate purchaseAd from the client contract
       const requestTx = await clientContract.purchaseAd(
         hre.ethers.utils.parseEther("1"),
         request.source,
@@ -93,7 +104,8 @@ task(
         gasLimit
       );
       const requestTxReceipt = await requestTx.wait(1);
-      const requestId = requestTxReceipt.events[2].args.id;
+
+      const requestId = requestTxReceipt.events[5].args.id;
       const requestGasUsed = requestTxReceipt.gasUsed.toString();
 
       // Simulating the JavaScript code locally
@@ -181,7 +193,8 @@ task(
 
             const fulfillGasUsed = await getGasUsedForFulfillRequest(
               success,
-              result
+              result,
+              linkToken.address
             );
             console.log(`Gas used by sendRequest: ${requestGasUsed}`);
             console.log(
@@ -194,14 +207,17 @@ task(
     });
   });
 
-const getGasUsedForFulfillRequest = async (success, result) => {
+const getGasUsedForFulfillRequest = async (
+  success,
+  result,
+  linkTokenAddress
+) => {
   const accounts = await ethers.getSigners();
   const deployer = accounts[0];
   const simulatedRequestId =
     "0x0000000000000000000000000000000000000000000000000000000000000001";
-
   const clientFactory = await ethers.getContractFactory("CardClub");
-  const client = await clientFactory.deploy(deployer.address);
+  const client = await clientFactory.deploy(deployer.address, linkTokenAddress);
   client.addSimulatedRequestId(deployer.address, simulatedRequestId);
   await client.deployTransaction.wait(1);
 

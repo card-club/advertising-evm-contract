@@ -41,12 +41,14 @@ task(
     await run("compile");
 
     // Deploy a mock oracle & registry contract to simulate a fulfillment
-    const { oracle, registry, linkToken } = await deployMockOracle();
+    const { oracle, registry, linkToken, registryProxy } =
+      await deployMockOracle();
     // Deploy the client contract
     const clientFactory = await ethers.getContractFactory("CardClub");
     const client = await clientFactory.deploy(
       oracle.address,
-      linkToken.address
+      linkToken.address,
+      registryProxy.address
     );
     await client.deployTransaction.wait(1);
 
@@ -105,7 +107,7 @@ task(
       );
       const requestTxReceipt = await requestTx.wait(1);
 
-      const requestId = requestTxReceipt.events[5].args.id;
+      const requestId = requestTxReceipt.events[6].args.id;
       const requestGasUsed = requestTxReceipt.gasUsed.toString();
 
       // Simulating the JavaScript code locally
@@ -194,7 +196,8 @@ task(
             const fulfillGasUsed = await getGasUsedForFulfillRequest(
               success,
               result,
-              linkToken.address
+              linkToken.address,
+              registryProxy.address
             );
             console.log(`Gas used by sendRequest: ${requestGasUsed}`);
             console.log(
@@ -210,14 +213,19 @@ task(
 const getGasUsedForFulfillRequest = async (
   success,
   result,
-  linkTokenAddress
+  linkTokenAddress,
+  functionsBillingRegistryProxyAddress
 ) => {
   const accounts = await ethers.getSigners();
   const deployer = accounts[0];
   const simulatedRequestId =
     "0x0000000000000000000000000000000000000000000000000000000000000001";
   const clientFactory = await ethers.getContractFactory("CardClub");
-  const client = await clientFactory.deploy(deployer.address, linkTokenAddress);
+  const client = await clientFactory.deploy(
+    deployer.address,
+    linkTokenAddress,
+    functionsBillingRegistryProxyAddress
+  );
   client.addSimulatedRequestId(deployer.address, simulatedRequestId);
   await client.deployTransaction.wait(1);
 
@@ -300,5 +308,10 @@ const deployMockOracle = async () => {
     deployer.address,
   ]);
   await oracleProxy.setRegistry(registryProxy.address);
-  return { oracle: oracleProxy, registry: registryProxy, linkToken };
+  return {
+    oracle: oracleProxy,
+    registry: registryProxy,
+    linkToken,
+    registryProxy,
+  };
 };

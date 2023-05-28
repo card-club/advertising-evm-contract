@@ -19,13 +19,16 @@ task("functions-deploy-client", "Deploys the CardClub contract")
 
     const oracleAddress = networks[network.name]["functionsOracleProxy"];
     const linkTokenAddress = networks[network.name]["linkToken"];
+    const linkBillingRegistryProxyAddress =
+      networks[network.name]["functionsBillingRegistryProxy"];
     console.log("\n__Compiling Contracts__");
     await run("compile");
 
     const clientContractFactory = await ethers.getContractFactory("CardClub");
     const clientContract = await clientContractFactory.deploy(
       oracleAddress,
-      linkTokenAddress
+      linkTokenAddress,
+      linkBillingRegistryProxyAddress
     );
 
     console.log(
@@ -53,7 +56,11 @@ task("functions-deploy-client", "Deploys the CardClub contract")
         );
         await run("verify:verify", {
           address: clientContract.address,
-          constructorArguments: [oracleAddress, linkTokenAddress],
+          constructorArguments: [
+            oracleAddress,
+            linkTokenAddress,
+            linkBillingRegistryProxyAddress,
+          ],
         });
         console.log("Contract verified");
       } catch (error) {

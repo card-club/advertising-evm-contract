@@ -16,7 +16,8 @@ error CardClub_refundFailedContactUs();
 contract CardClub is FunctionsClient, ConfirmedOwner {
     using Functions for Functions.Request;
 
-    address internal linkAddress;
+    address internal immutable linkAddress;
+    address internal immutable linkBillingProxyAddress;
     uint256 internal constant LINK_DIVISIBILITY = 10 ** 18;
 
     mapping(bytes32 => address) public requestWalletAddress;
@@ -33,9 +34,19 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
     // solhint-disable-next-line no-empty-blocks
     constructor(
         address oracle,
-        address linkTokenAddress
+        address linkTokenAddress,
+        address linkBillingRegistryProxyAddress
     ) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {
+        require(
+            linkTokenAddress != address(0),
+            "Link token address is not set"
+        );
+        require(
+            linkBillingRegistryProxyAddress != address(0),
+            "Functions Billings Registry address is not set"
+        );
         linkAddress = linkTokenAddress;
+        linkBillingProxyAddress = linkBillingRegistryProxyAddress;
     }
 
     /**
@@ -67,7 +78,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
 
         // Fund subscription
         bool success2 = IERC1363(linkAddress).transferAndCall(
-            0x452C33Cef9Bc773267Ac5F8D85c1Aca2bA4bcf0C,
+            linkBillingProxyAddress,
             linkAmount,
             abi.encode(subscriptionId)
         );
@@ -104,6 +115,8 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         bytes memory response,
         bytes memory err
     ) internal override {
+        emit OCRResponse(requestId, response, err);
+
         if (err.length > 0) {
             // Refund link
             bool success = IERC20(linkAddress).transferFrom(
@@ -113,8 +126,6 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
             );
             if (!success) revert CardClub_refundFailedContactUs();
         }
-
-        emit OCRResponse(requestId, response, err);
     }
 
     /**

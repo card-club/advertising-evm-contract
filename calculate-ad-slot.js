@@ -1,14 +1,14 @@
 // Max retries HTTP requests are 4 because total HTTP requests a Chainlink Function can do is 5 https://docs.chain.link/chainlink-functions/resources/service-limits
-function httpRequest(url, options, retries = 4) {
+function httpRequest(url, headers, retries = 4) {
   return new Promise((resolve, reject) => {
-    fetch(url, options)
+    Functions.makeHttpRequest({url, headers})
       .then((response) => {
-        if (response.ok) {
-          resolve(response.json());
+        if (response.statusText === "OK") {
+          resolve(response.data);
         } else if (retries > 0) {
           console.log(`Retry attempts remaining: ${retries}`);
           setTimeout(() => {
-            httpRequest(url, options, retries - 1)
+            httpRequest(url, headers, retries - 1)
               .then(resolve)
               .catch(reject);
           }, 1000); // retry after 1 second
@@ -20,7 +20,7 @@ function httpRequest(url, options, retries = 4) {
         if (retries > 0) {
           console.log(`Retry attempts remaining: ${retries}`);
           setTimeout(() => {
-            httpRequest(url, options, retries - 1)
+            httpRequest(url, headers, retries - 1)
               .then(resolve)
               .catch(reject);
           }, 1000); // retry after 1 second
@@ -32,7 +32,7 @@ function httpRequest(url, options, retries = 4) {
 }
 
 // TODO: SpaceAndTime url for API call
-httpRequest("https://jsonplaceholder.typicode.com/todos/1", { method: "GET" })
+httpRequest("https://jsonplaceholder.typicode.com/todos/1", {})
   .then((data) => {
     // TODO: SpaceAndTime query
     console.log(data);

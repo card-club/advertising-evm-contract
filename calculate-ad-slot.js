@@ -1,7 +1,7 @@
 // Max retries HTTP requests are 4 because total HTTP requests a Chainlink Function can do is 5 https://docs.chain.link/chainlink-functions/resources/service-limits
 function httpRequest(url, headers, retries = 4) {
   return new Promise((resolve, reject) => {
-    Functions.makeHttpRequest({url, headers})
+    Functions.makeHttpRequest({ url, headers })
       .then((response) => {
         if (response.statusText === "OK") {
           resolve(response.data);

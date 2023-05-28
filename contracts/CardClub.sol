@@ -79,7 +79,8 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         // Fund subscription
         bool success2 = IERC1363(linkAddress).transferAndCall(
             linkBillingProxyAddress,
-            linkAmount,
+            // This is enough to cover the current fees 0.2 LINK + transaction cost + variable (depending on gas)
+            LINK_DIVISIBILITY / 4,
             abi.encode(subscriptionId)
         );
 

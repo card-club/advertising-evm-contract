@@ -1,3 +1,14 @@
+const linkAmount = args[0];
+const publisherId = args[1];
+
+if (!linkAmount) {
+  throw "Link amount is required";
+}
+
+if (!publisherId) {
+  throw "Publisher ID is required";
+}
+
 // Max retries HTTP requests are 4 because total HTTP requests a Chainlink Function can do is 5 https://docs.chain.link/chainlink-functions/resources/service-limits
 function httpRequest(url, headers, retries = 4) {
   return new Promise((resolve, reject) => {

@@ -37,12 +37,12 @@ jobs:
       - uses: ./.github/actions/setup
       - run: npm run simulate
 
-   slither: 
-      name: Slither
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - uses: ./.github/actions/setup
-        - run: cd node_modules
-        - uses: crytic/slither-action@v0.3.0
-        - run: slither ../contracts/CardClub.sol --exclude-dependencies
+  slither: 
+    name: Slither
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+      - run: cd node_modules
+      - uses: crytic/slither-action@v0.3.0
+      - run: slither ../contracts/CardClub.sol --exclude-dependencies

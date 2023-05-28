@@ -7,9 +7,9 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "gas": "REPORT_GAS=true npx hardhat test",
-    "deploy": "hardhat run scripts/deploy.ts",
-    "lint": "solhint 'contracts/**/*.sol' --fix",
-    "format": "prettier --write ."
+    "lint": "solhint 'contracts/CardClub.sol' --fix",
+    "format": "prettier --write .",
+    "simulate": "npx hardhat functions-simulate"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",

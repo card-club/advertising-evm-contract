@@ -4,9 +4,9 @@ pragma solidity ^0.8.7;
 import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 // import "@chainlink/contracts/src/v0.8/dev/functions/FunctionsClient.sol"; // Once published
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/interfaces/IERC1363.sol";
+import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC1363} from "@openzeppelin/contracts/interfaces/IERC1363.sol";
 
 error CardClub_LinkAmountToLow();
 error CardClub_payLinkForAdFailed();
@@ -19,8 +19,8 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
     address internal linkAddress;
     uint256 internal constant LINK_DIVISIBILITY = 10 ** 18;
 
-    mapping(bytes32 => address) public requests_wallet_address;
-    mapping(bytes32 => uint256) public requests_link_amount;
+    mapping(bytes32 => address) public requestWalletAddress;
+    mapping(bytes32 => uint256) public requestLinkAmount;
 
     event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
@@ -49,7 +49,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
      * @return Functions request ID
      */
     function purchaseAd(
-        uint256 link_amount,
+        uint256 linkAmount,
         string calldata source,
         bytes calldata secrets,
         string[] calldata args,
@@ -57,18 +57,18 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         uint32 gasLimit
     ) public payable returns (bytes32) {
         // Purchase Ad amount should be at least 1 LINK
-        if (link_amount < LINK_DIVISIBILITY) revert CardClub_LinkAmountToLow();
+        if (linkAmount < LINK_DIVISIBILITY) revert CardClub_LinkAmountToLow();
         bool success = IERC20(linkAddress).transferFrom(
             msg.sender,
             address(this),
-            link_amount
+            linkAmount
         );
         if (!success) revert CardClub_payLinkForAdFailed();
 
         // Fund subscription
         bool success2 = IERC1363(linkAddress).transferAndCall(
             0x452C33Cef9Bc773267Ac5F8D85c1Aca2bA4bcf0C,
-            link_amount,
+            linkAmount,
             abi.encode(subscriptionId)
         );
 
@@ -86,8 +86,8 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         if (args.length > 0) req.addArgs(args);
 
         bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
-        requests_wallet_address[assignedReqID] = msg.sender;
-        requests_link_amount[assignedReqID] = link_amount;
+        requestWalletAddress[assignedReqID] = msg.sender;
+        requestLinkAmount[assignedReqID] = linkAmount;
         return assignedReqID;
     }
 
@@ -108,8 +108,8 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
             // Refund link
             bool success = IERC20(linkAddress).transferFrom(
                 address(this),
-                msg.sender,
-                requests_link_amount[requestId]
+                requestWalletAddress[requestId],
+                requestLinkAmount[requestId]
             );
             if (!success) revert CardClub_refundFailedContactUs();
         }

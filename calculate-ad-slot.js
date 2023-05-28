@@ -1,3 +1,42 @@
-// 5 minutes https://docs.chain.link/chainlink-functions/resources/service-limits
+// Max retries HTTP requests are 4 because total HTTP requests a Chainlink Function can do is 5 https://docs.chain.link/chainlink-functions/resources/service-limits
+function httpRequest(url, options, retries = 4) {
+  return new Promise((resolve, reject) => {
+    fetch(url, options)
+      .then((response) => {
+        if (response.ok) {
+          resolve(response.json());
+        } else if (retries > 0) {
+          console.log(`Retry attempts remaining: ${retries}`);
+          setTimeout(() => {
+            httpRequest(url, options, retries - 1)
+              .then(resolve)
+              .catch(reject);
+          }, 1000); // retry after 1 second
+        } else {
+          reject(new Error("Failed after multiple attempts"));
+        }
+      })
+      .catch((error) => {
+        if (retries > 0) {
+          console.log(`Retry attempts remaining: ${retries}`);
+          setTimeout(() => {
+            httpRequest(url, options, retries - 1)
+              .then(resolve)
+              .catch(reject);
+          }, 1000); // retry after 1 second
+        } else {
+          reject(error);
+        }
+      });
+  });
+}
+
+// TODO: SpaceAndTime url for API call
+httpRequest("https://jsonplaceholder.typicode.com/todos/1", { method: "GET" })
+  .then((data) => {
+    // TODO: SpaceAndTime query
+    console.log(data);
+  })
+  .catch((error) => console.error(error));
 
 return Functions.encodeUint256(173);

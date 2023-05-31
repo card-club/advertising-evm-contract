@@ -140,7 +140,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         LinkTokenInterface link = LinkTokenInterface(linkAddress);
         require(
             link.transfer(msg.sender, link.balanceOf(address(this))),
-            "Forbidden to transfer CardClub contract Link amount to non-owner"
+            "Forbidden to transfer link to non-owner"
         );
     }
 

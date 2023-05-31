@@ -60,7 +60,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
      * @param linkAmount Link amount to pay for the ad
      * @param source JavaScript source code
      * @param secrets Encrypted secrets payload
-     * @param args List of arguments accessible from within the source code
+     * @param args List of arguments accessible from within the source code (linkAmount and publisherId)
      * @param subscriptionId Funtions billing subscription ID
      * @param gasLimit Maximum amount of gas used to call the client contract's `handleOracleFulfillment` function
      * @return Functions request ID

@@ -31,6 +31,9 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
      * @notice Executes once when a contract is created to initialize state variables
      *
      * @param oracle - The FunctionsOracle contract
+     * @param linkTokenAddress - Linktoken contract address
+     * @param linkBillingRegistryProxyAddress - Link Billing Registry Proxy Contract
+     * @param sourceHashValue - JavaScript source hash to prevent people running their own script
      */
     constructor(
         address oracle,
@@ -52,8 +55,9 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
     }
 
     /**
-     * @notice Send a simple request
+     * @notice Send a simple request to purchase an Card Club publisher ad
      *
+     * @param linkAmount Link amount to pay for the ad
      * @param source JavaScript source code
      * @param secrets Encrypted secrets payload
      * @param args List of arguments accessible from within the source code

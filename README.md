@@ -61,12 +61,12 @@ SOLC_VERSION=0.8.18 slither ../contracts/CardClub.sol --exclude-dependencies
 - [x] Add Github action unit tests
 - [x] Add logo
 - [x] Better README.md
-- [ ] Explain design decisions 
-- [ ] Add Secret for cardclub api access (bearer token is fine)
-- [ ] Add unit tests
-- [ ] Clean up of unused files
-- [ ] Make functions-request hardhat task accept custom publisherId and linkAmount
 - [ ] Add MIT license
+- [ ] Add Secret for cardclub api access (bearer token is fine) (Thursday)
+- [ ] Explain design decisions (Friday)
+- [ ] Clean up of unused files (Weekend)
+- [ ] Make functions-request hardhat task accept custom publisherId and linkAmount (Weekend)
+- [ ] Add unit tests (Weekend)
 
 ## Avalanche Fuji faucet and snowtrace
 

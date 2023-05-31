@@ -61,7 +61,7 @@ SOLC_VERSION=0.8.18 slither ../contracts/CardClub.sol --exclude-dependencies
 - [x] Add Github action unit tests
 - [x] Add logo
 - [x] Better README.md
-- [ ] Add MIT license
+- [x] Add MIT license
 - [ ] Add Secret for cardclub api access (bearer token is fine) (Thursday)
 - [ ] Explain design decisions (Friday)
 - [ ] Clean up of unused files (Weekend)

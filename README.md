@@ -1,66 +1,77 @@
-# Card.Club Advertising Chainlink Functions - SpaceAndTime - EVM smart contract
+#  <img src="https://github.com/card-club/advertising-evm-contract/assets/3293323/b16dfaba-961d-4cbd-886f-9b10cf58b10f" width=60>ard.Club - Advertising Proof of concept
 
-Basically this smart contract will be used to create:
+## Chainlink Functions - EVM smart contract - SpaceAndTime
+Card.Club allows any user to create an ad request with fair pricing based on historic verifiable immutable analytics data and they can verify in the future that they received the views. 
 
-- create an ad request with fair pricing (limited by historic card.club game/story statistics, doesn't make sense to buy more advertising than is possible to deliver) (chainlink function/solidity)
-  - Do one query to count views and substract current advertising scheduled views
-- approving ad request (so we can prevent malicious ads and we can see who approved the ad, but also reward them for the approving work) (pure solidity)
-- approved ads get queried by spaceandtime and will be used in card.club games/stories
+## Design decisions
 
-This project will only use Hardhat (because of the Chainlink functions integration) development flow.
+### Smart Contract
 
-https://hardhat.org/hardhat-runner/docs/getting-started#overview
+### Chainlink function
 
-1. Extract all the necessary code from the https://github.com/smartcontractkit/functions-hardhat-starter-kit for running Chainlink functions and really understand the whole flow
-2. Create ad request function
-3. Create approving ad request function
-4. Testing:
-   1. Good testing suite (including Stateless and Stateful Fuzz Tests and integration tests)
-   2. Static analysis tooling passing
-   3. Invariants formalized
-   4. Good documentation
-   5. Release, Maintenance and Recovery plans in place
+### SxT Table design
 
-## Avalanche Fuji faucet and snowtrace
+## Commands
 
-https://faucets.chain.link/fuji
-https://faucet.avax.network/
-https://testnet.snowtrace.io/
-
-## E2E test
+### Simulate
 
 ```
-npx hardhat functions-simulate
+npm run simulate
 ```
 
-## Deploy and verify
+### Deploy and verify on Avalanche Fuji
 
-Deploy cardclub.sol
+Deploy CardClub.sol with the following command:
 
 ```
 npx hardhat functions-deploy-client --network avalancheFuji --verify true
 ```
 
-Approve link
+After you see the deployed contract address, go and approve $Link (normally this happens in the UI with an approval flow)
 
 https://testnet.snowtrace.io/token/0x0b9d5d9136855f6fec3c0993fee6e9ce8a297846?a=0xf4e20531cd11fb8b70896aa9710fedbeb9be87c3#writeContract
 
-Fund Functions billing subscription
+Next we register our functions billing subscription and we fund it with 0.25 Link (this is enough, because everybody will pay for their own usage)
 
 ```
 npx hardhat functions-sub-create --network avalancheFuji --amount 0.25 --contract 0x6D1d7b6e24B504ca0725a05c960f0A56f20C28d3
 ```
 
-Do request for ad purchase
+Finally you can do an ad buy function request (with hardcoded publisherId and linkAmount for now, TODO: make this configurable)
 
 ```
 npx hardhat functions-request --network avalancheFuji --contract 0x6D1d7b6e24B504ca0725a05c960f0A56f20C28d3 --subid 25 --gaslimit 250000
 ```
 
-## Slither
+### Slither
 
 cd to the node_modules folder (reason: https://stackoverflow.com/questions/73287140/slither-cannot-find-the-dependency-with-openzeppelin) and run the following command:
 
 ```
 SOLC_VERSION=0.8.18 slither ../contracts/CardClub.sol --exclude-dependencies
 ```
+
+## TODO
+
+- [x] Extract all the necessary code from the https://github.com/smartcontractkit/functions-hardhat-starter-kit for running Chainlink functions and really understand the whole flow. Also simplify where possible
+- [x] Create ad request function
+- [x] Add Slither and fix potential security issues in contract CardClub.Sol
+- [x] Add Github action simulate
+- [x] Add Github action linter
+- [x] Add Github action unit tests
+- [x] Add logo
+- [x] Better README.md
+- [ ] Explain design decisions 
+- [ ] Add Secret for cardclub api access (bearer token is fine)
+- [ ] Add unit tests
+- [ ] Clean up of unused files
+- [ ] Make functions-request hardhat task accept custom publisherId and linkAmount
+- [ ] Add MIT license
+
+## Avalanche Fuji faucet and snowtrace
+
+https://faucets.chain.link/fuji
+
+https://faucet.avax.network/
+
+https://testnet.snowtrace.io/

@@ -4,4 +4,5 @@ module.exports = {
   ...require("./prompt.js"),
   ...require("./spin.js"),
   ...require("./logger.js"),
+  ...require("./hashSourceFile.js"),
 };

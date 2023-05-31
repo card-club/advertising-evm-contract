@@ -11,6 +11,7 @@ import {IERC1363} from "@openzeppelin/contracts/interfaces/IERC1363.sol";
 error CardClub_LinkAmountToLow();
 error CardClub_payLinkForAdFailed();
 error CardClub_payLinkForRegistryFailed();
+error CardClub_invalidSource();
 error CardClub_refundFailedContactUs();
 
 contract CardClub is FunctionsClient, ConfirmedOwner {
@@ -18,6 +19,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
 
     address internal immutable linkAddress;
     address internal immutable linkBillingProxyAddress;
+    bytes32 internal immutable sourceHash;
     uint256 internal constant LINK_DIVISIBILITY = 10 ** 18;
 
     mapping(bytes32 => address) public requestWalletAddress;
@@ -30,12 +32,11 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
      *
      * @param oracle - The FunctionsOracle contract
      */
-    // https://github.com/protofire/solhint/issues/242
-    // solhint-disable-next-line no-empty-blocks
     constructor(
         address oracle,
         address linkTokenAddress,
-        address linkBillingRegistryProxyAddress
+        address linkBillingRegistryProxyAddress,
+        bytes32 sourceHashValue
     ) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {
         require(
             linkTokenAddress != address(0),
@@ -47,6 +48,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         );
         linkAddress = linkTokenAddress;
         linkBillingProxyAddress = linkBillingRegistryProxyAddress;
+        sourceHash = sourceHashValue;
     }
 
     /**
@@ -67,6 +69,9 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         uint64 subscriptionId,
         uint32 gasLimit
     ) public returns (bytes32) {
+        if (keccak256(abi.encodePacked(source)) != sourceHash)
+            revert CardClub_invalidSource();
+
         // Purchase Ad amount should be at least 1 LINK
         if (linkAmount < LINK_DIVISIBILITY) revert CardClub_LinkAmountToLow();
         bool success = IERC20(linkAddress).transferFrom(
@@ -83,7 +88,6 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
             LINK_DIVISIBILITY / 4,
             abi.encode(subscriptionId)
         );
-
         if (!success2) revert CardClub_payLinkForRegistryFailed();
 
         Functions.Request memory req;
@@ -136,7 +140,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         LinkTokenInterface link = LinkTokenInterface(linkAddress);
         require(
             link.transfer(msg.sender, link.balanceOf(address(this))),
-            "Unable to transfer"
+            "Forbidden to transfer CardClub contract Link amount to non-owner"
         );
     }
 

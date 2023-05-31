@@ -7,7 +7,7 @@ const {
 const { SHARED_DON_PUBLIC_KEY } = require("../networks");
 const path = require("path");
 const process = require("process");
-
+const utils = require("../utils");
 task(
   "functions-simulate",
   "Simulates an end-to-end fulfillment locally for the CardClub contract"
@@ -43,12 +43,16 @@ task(
     // Deploy a mock oracle & registry contract to simulate a fulfillment
     const { oracle, registry, linkToken, registryProxy } =
       await deployMockOracle();
+
+    const sourceHash = utils.hashSourceFile("./calculate-ad-slot.js");
     // Deploy the client contract
     const clientFactory = await ethers.getContractFactory("CardClub");
+
     const client = await clientFactory.deploy(
       oracle.address,
       linkToken.address,
-      registryProxy.address
+      registryProxy.address,
+      sourceHash
     );
     await client.deployTransaction.wait(1);
 
@@ -197,7 +201,8 @@ task(
               success,
               result,
               linkToken.address,
-              registryProxy.address
+              registryProxy.address,
+              sourceHash
             );
             console.log(`Gas used by sendRequest: ${requestGasUsed}`);
             console.log(
@@ -214,7 +219,8 @@ const getGasUsedForFulfillRequest = async (
   success,
   result,
   linkTokenAddress,
-  functionsBillingRegistryProxyAddress
+  functionsBillingRegistryProxyAddress,
+  sourceHash
 ) => {
   const accounts = await ethers.getSigners();
   const deployer = accounts[0];
@@ -224,7 +230,8 @@ const getGasUsedForFulfillRequest = async (
   const client = await clientFactory.deploy(
     deployer.address,
     linkTokenAddress,
-    functionsBillingRegistryProxyAddress
+    functionsBillingRegistryProxyAddress,
+    sourceHash
   );
   client.addSimulatedRequestId(deployer.address, simulatedRequestId);
   await client.deployTransaction.wait(1);

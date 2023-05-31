@@ -48,13 +48,13 @@ https://testnet.snowtrace.io/token/0x0b9d5d9136855f6fec3c0993fee6e9ce8a297846?a=
 Fund Functions billing subscription
 
 ```
-npx hardhat functions-sub-create --network avalancheFuji --amount 0.25 --contract 0x589875cb948DB8438776f9f67cc92698Ee755dc7
+npx hardhat functions-sub-create --network avalancheFuji --amount 0.25 --contract 0x6D1d7b6e24B504ca0725a05c960f0A56f20C28d3
 ```
 
 Do request for ad purchase
 
 ```
-npx hardhat functions-request --network avalancheFuji --contract 0x589875cb948DB8438776f9f67cc92698Ee755dc7 --subid 24 --gaslimit 250000
+npx hardhat functions-request --network avalancheFuji --contract 0x6D1d7b6e24B504ca0725a05c960f0A56f20C28d3 --subid 25 --gaslimit 250000
 ```
 
 ## Slither

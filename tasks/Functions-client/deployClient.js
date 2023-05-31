@@ -1,5 +1,6 @@
 const { types } = require("hardhat/config");
 const { networks } = require("../networks");
+const utils = require("../utils");
 
 task("functions-deploy-client", "Deploys the CardClub contract")
   .addOptionalParam(
@@ -21,6 +22,7 @@ task("functions-deploy-client", "Deploys the CardClub contract")
     const linkTokenAddress = networks[network.name]["linkToken"];
     const linkBillingRegistryProxyAddress =
       networks[network.name]["functionsBillingRegistryProxy"];
+    const sourceHash = utils.hashSourceFile("./calculate-ad-slot.js");
     console.log("\n__Compiling Contracts__");
     await run("compile");
 
@@ -28,7 +30,8 @@ task("functions-deploy-client", "Deploys the CardClub contract")
     const clientContract = await clientContractFactory.deploy(
       oracleAddress,
       linkTokenAddress,
-      linkBillingRegistryProxyAddress
+      linkBillingRegistryProxyAddress,
+      sourceHash
     );
 
     console.log(
@@ -60,6 +63,7 @@ task("functions-deploy-client", "Deploys the CardClub contract")
             oracleAddress,
             linkTokenAddress,
             linkBillingRegistryProxyAddress,
+            sourceHash,
           ],
         });
         console.log("Contract verified");

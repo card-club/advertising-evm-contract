@@ -34,13 +34,13 @@ https://testnet.snowtrace.io/token/0x0b9d5d9136855f6fec3c0993fee6e9ce8a297846?a=
 Next we register our functions billing subscription and we fund it with 0.25 Link (this is enough, because everybody will pay for their own usage)
 
 ```
-npx hardhat functions-sub-create --network avalancheFuji --amount 0.25 --contract 0x6D1d7b6e24B504ca0725a05c960f0A56f20C28d3
+npx hardhat functions-sub-create --network avalancheFuji --amount 0.25 --contract 0x4dd9C6F7D80EE37CEDeccc152e99E3f4403f6C74
 ```
 
 Finally you can do an ad buy function request (with hardcoded publisherId and linkAmount for now, TODO: make this configurable)
 
 ```
-npx hardhat functions-request --network avalancheFuji --contract 0x6D1d7b6e24B504ca0725a05c960f0A56f20C28d3 --subid 25 --gaslimit 250000
+npx hardhat functions-request --network avalancheFuji --contract 0x4dd9C6F7D80EE37CEDeccc152e99E3f4403f6C74 --subid 28 --gaslimit 250000
 ```
 
 ### Slither
@@ -62,7 +62,7 @@ SOLC_VERSION=0.8.18 slither ../contracts/CardClub.sol --exclude-dependencies
 - [x] Add logo
 - [x] Better README.md
 - [x] Add MIT license
-- [ ] Add Secret for cardclub api access (bearer token is fine) (Thursday)
+- [x] Add Secret for cardclub api access
 - [ ] Explain design decisions (Friday)
 - [ ] Clean up of unused files (Weekend)
 - [ ] Make functions-request hardhat task accept custom publisherId and linkAmount (Weekend)

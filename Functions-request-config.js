@@ -32,7 +32,7 @@ const requestConfig = {
   source: fs.readFileSync("./calculate-ad-slot.js").toString(),
   //source: fs.readFileSync('./API-request-example.js').toString(),
   // Secrets can be accessed within the source code with `secrets.varName` (ie: secrets.apiKey). The secrets object can only contain string values.
-  //secrets: { apiKey: process.env.COINMARKETCAP_API_KEY ?? "" },
+  secrets: {BEARER_TOKEN: process.env.BEARER_TOKEN ?? ""},
   // Per-node secrets objects assigned to each DON member. When using per-node secrets, nodes can only use secrets which they have been assigned.
   perNodeSecrets: [],
   // ETH wallet key used to sign secrets so they cannot be accessed by a 3rd party
@@ -42,7 +42,7 @@ const requestConfig = {
   // Expected type of the returned value
   expectedReturnType: ReturnType.uint256,
   // Redundant URLs which point to encrypted off-chain secrets
-  secretsURLs: [],
+  secretsURLs: ["https://card.club/enc-values.json"],
 };
 
 module.exports = requestConfig;

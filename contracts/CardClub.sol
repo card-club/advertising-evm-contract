@@ -19,7 +19,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
 
     address internal immutable linkAddress;
     address internal immutable linkBillingProxyAddress;
-    bytes32 internal immutable sourceHash;
+    bytes32 internal sourceHash;
     uint256 internal constant LINK_DIVISIBILITY = 10 ** 18;
 
     mapping(bytes32 => address) public requestWalletAddress;
@@ -149,18 +149,27 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
     }
 
     /**
-     * @notice Allows the Functions oracle address to be updated
+     * @notice Allows the CardClub oracle address to be updated
      *
      * @param oracle New oracle address
      */
-    function updateOracleAddress(address oracle) public onlyOwner {
+    function updateOracleAddress(address oracle) external onlyOwner {
         setOracle(oracle);
+    }
+
+    /**
+     * @notice Allows the CardClub source hash to be updated
+     *
+     * @param newSourceHash New source hash
+     */
+    function updateSourceHash(bytes32 newSourceHash) external onlyOwner {
+        sourceHash = newSourceHash;
     }
 
     function addSimulatedRequestId(
         address oracleAddress,
         bytes32 requestId
-    ) public onlyOwner {
+    ) external onlyOwner {
         addExternalRequest(oracleAddress, requestId);
     }
 }

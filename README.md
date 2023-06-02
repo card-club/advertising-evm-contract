@@ -1,7 +1,8 @@
-#  <img src="https://github.com/card-club/advertising-evm-contract/assets/3293323/b16dfaba-961d-4cbd-886f-9b10cf58b10f" width=60>ard.Club - Advertising Proof of concept
+# <img src="https://github.com/card-club/advertising-evm-contract/assets/3293323/b16dfaba-961d-4cbd-886f-9b10cf58b10f" width=60>ard.Club - Advertising Proof of concept
 
 ## Chainlink Functions - EVM smart contract - SpaceAndTime
-Card.Club allows any user to create an ad request with fair pricing based on historic verifiable immutable analytics data and they can verify in the future that they received the views. 
+
+Card.Club allows any user to create an ad request with fair pricing based on historic verifiable immutable analytics data and they can verify in the future that they received the views.
 
 ## Design decisions Smart Contract/Chainlink function
 
@@ -20,11 +21,11 @@ There are a couple of approaches, like allow listing users you 'trust', but the 
 
 #### Prevent executing different script
 
-You can sacrifise flexibility and set the script source you want to execute in the constructor or even hardcode it, but the more elegant solution I think would be to check the hash of the script source and make the hash configurable by the owner. Advantage is that you can change the script source without redeploying the contract or pay more gas fees. 
+You can sacrifise flexibility and set the script source you want to execute in the constructor or even hardcode it, but the more elegant solution I think would be to check the hash of the script source and make the hash configurable by the owner. Advantage is that you can change the script source without redeploying the contract or pay more gas fees.
 
 #### When API call keeps failing
 
-You should never let an user pay for something they didn't receive. It's not a lottery when they interact with your smart contract and it is using an API that fails (which could be not your fault). The solution is quite simple, if the chainlink function gives back an error, we refund the Link they sent.  
+You should never let an user pay for something they didn't receive. It's not a lottery when they interact with your smart contract and it is using an API that fails (which could be not your fault). The solution is quite simple, if the chainlink function gives back an error, we refund the Link they sent.
 
 #### Improving the Reliability of the Chainlink function
 
@@ -53,13 +54,13 @@ https://testnet.snowtrace.io/token/0x0b9d5d9136855f6fec3c0993fee6e9ce8a297846?a=
 Next we register our functions billing subscription and we fund it with 0.25 Link (this is enough, because everybody will pay for their own usage)
 
 ```
-npx hardhat functions-sub-create --network avalancheFuji --amount 0.25 --contract 0x4dd9C6F7D80EE37CEDeccc152e99E3f4403f6C74
+npx hardhat functions-sub-create --network avalancheFuji --amount 0.25 --contract 0x16a0AE76e5A6A409aFc97f93bCb7B9Ec3E4de7A2
 ```
 
 Finally you can do an ad buy function request (with hardcoded publisherId and linkAmount for now, TODO: make this configurable)
 
 ```
-npx hardhat functions-request --network avalancheFuji --contract 0x4dd9C6F7D80EE37CEDeccc152e99E3f4403f6C74 --subid 28 --gaslimit 250000
+npx hardhat functions-request --network avalancheFuji --contract 0x16a0AE76e5A6A409aFc97f93bCb7B9Ec3E4de7A2 --subid 32 --gaslimit 250000
 ```
 
 ### Slither
@@ -83,8 +84,7 @@ SOLC_VERSION=0.8.18 slither ../contracts/CardClub.sol --exclude-dependencies
 - [x] Add MIT license
 - [x] Add Secret for cardclub api access
 - [x] Explain design decisions
-- [ ] Make the hash script source updated by the owner only 
-- [ ] Make functions-request hardhat task accept custom publisherId and linkAmount (Weekend)
+- [x] Make the hash script source updated by the owner only
 
 ## Avalanche Fuji faucet and snowtrace
 

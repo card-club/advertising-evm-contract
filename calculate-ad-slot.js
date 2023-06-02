@@ -46,7 +46,7 @@ function httpRequest(url, headers, data, retries = 4) {
 const boughtAdViews = httpRequest(
   "https://card.club/api/ads",
   {
-    'Authorization': `Bearer ${ secrets.BEARER_TOKEN }`,
+    Authorization: `Bearer ${secrets.BEARER_TOKEN}`,
     "Content-Type": "application/json",
   },
   { publisherId: publisherId, linkAmount: linkAmount }

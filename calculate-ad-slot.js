@@ -18,6 +18,7 @@ function httpRequest(url, headers, data, retries = 4) {
         if (response.statusText === "OK") {
           resolve(response.data);
         } else if (retries > 0) {
+          console.log(response);
           console.log(`Retry attempts remaining: ${retries}`);
           setTimeout(() => {
             httpRequest(url, headers, data, retries - 1)
@@ -29,6 +30,7 @@ function httpRequest(url, headers, data, retries = 4) {
         }
       })
       .catch((error) => {
+        console.log(error);
         if (retries > 0) {
           console.log(`Retry attempts remaining: ${retries}`);
           setTimeout(() => {

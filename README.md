@@ -1,4 +1,4 @@
-# <img style="margin-bottom: -4px; margin-right: -4px" src="https://github.com/card-club/advertising-evm-contract/assets/3293323/82041ce5-4f76-49b9-9e0b-90983b02b602" width=55>ard.Club - Advertising Proof of concept
+# Card.Club - Advertising Proof of concept
 
 ## Chainlink Functions - EVM smart contract - SpaceAndTime
 

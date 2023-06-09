@@ -54,13 +54,13 @@ https://testnet.snowtrace.io/token/0x0b9d5d9136855f6fec3c0993fee6e9ce8a297846?a=
 Next we register our functions billing subscription and we fund it with 0.25 Link (this is enough, because everybody will pay for their own usage)
 
 ```
-npx hardhat functions-sub-create --network avalancheFuji --amount 0.25 --contract 0x16a0AE76e5A6A409aFc97f93bCb7B9Ec3E4de7A2
+npx hardhat functions-sub-create --network avalancheFuji --amount 0.5 --contract 0x8B5d01E6A0D7E996FA6Cd046E39a46fE9d515F8F
 ```
 
 Finally you can do an ad buy function request (with hardcoded publisherId and linkAmount for now, TODO: make this configurable)
 
 ```
-npx hardhat functions-request --network avalancheFuji --contract 0x16a0AE76e5A6A409aFc97f93bCb7B9Ec3E4de7A2 --subid 32 --gaslimit 250000
+npx hardhat functions-request --network avalancheFuji --contract 0x8B5d01E6A0D7E996FA6Cd046E39a46fE9d515F8F --subid 35 --gaslimit 300000
 ```
 
 ### Slither

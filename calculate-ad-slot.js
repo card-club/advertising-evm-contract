@@ -43,7 +43,7 @@ function httpRequest(url, headers, data, retries = 4) {
   });
 }
 
-const boughtAdViews = httpRequest(
+const boughtAdMinutes = httpRequest(
   "https://card.club/api/ads",
   {
     "Authorization": `Bearer ${secrets.BEARER_TOKEN}`,
@@ -52,8 +52,8 @@ const boughtAdViews = httpRequest(
   { publisherId: publisherId, linkAmount: linkAmount }
 )
   .then((data) => {
-    return Functions.encodeUint256(data.adViews);
+    return Functions.encodeUint256(data.adMinutes);
   })
   .catch((error) => console.error(error));
 
-return boughtAdViews;
+return boughtAdMinutes;

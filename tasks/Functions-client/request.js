@@ -10,6 +10,7 @@ const { deleteGist } = require("../utils/github");
 const { RequestStore } = require("../utils/artifact");
 const path = require("path");
 const process = require("process");
+const publisherAddress = "0xF4E20531CD11Fb8b70896AA9710FeDbEb9be87c3";
 
 task(
   "functions-request",
@@ -142,6 +143,7 @@ task(
     }
 
     const transactionEstimateGas = await clientContract.estimateGas.purchaseAd(
+      publisherAddress,
       hre.ethers.utils.parseEther("1"),
       requestConfig.source,
       requestConfig.secrets && Object.keys(requestConfig.secrets).length > 0
@@ -320,6 +322,7 @@ task(
       try {
         // Initiate the on-chain request after all listeners are initialized
         requestTx = await clientContract.purchaseAd(
+          publisherAddress,
           hre.ethers.utils.parseEther("1"),
           request.source,
           request.secrets ?? [],

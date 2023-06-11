@@ -23,6 +23,8 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
     uint256 internal constant LINK_DIVISIBILITY = 10 ** 18;
 
     mapping(bytes32 => address) public requestWalletAddress;
+    mapping(bytes32 => address) public requestPublisherAddress;
+    mapping(address => uint256) public requestPublisherBalance;
     mapping(bytes32 => uint256) public requestLinkAmount;
 
     event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
@@ -66,6 +68,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
      * @return Functions request ID
      */
     function purchaseAd(
+        address publisherAddress,
         uint256 linkAmount,
         string calldata source,
         bytes calldata secrets,
@@ -108,6 +111,7 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
         bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
         requestWalletAddress[assignedReqID] = msg.sender;
         requestLinkAmount[assignedReqID] = linkAmount;
+        requestPublisherAddress[assignedReqID] = publisherAddress;
         return assignedReqID;
     }
 
@@ -134,18 +138,37 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
                 requestLinkAmount[requestId]
             );
             if (!success) revert CardClub_refundFailedContactUs();
+        } else {
+            // Add it to publisher balance
+            unchecked {                
+                requestPublisherBalance[requestPublisherAddress[requestId]] = requestPublisherBalance[requestPublisherAddress[requestId]] +
+                    (requestLinkAmount[requestId] - (LINK_DIVISIBILITY / 2));
+            }
         }
     }
 
     /**
      * @notice Witdraws LINK from the contract to the Owner
      */
-    function withdrawLink() external onlyOwner {
+    function withdrawLinkOwner() external onlyOwner {
         LinkTokenInterface link = LinkTokenInterface(linkAddress);
         require(
             link.transfer(msg.sender, link.balanceOf(address(this))),
             "Forbidden to transfer link to non-owner"
         );
+    }
+
+    /**
+     * @notice Witdraws LINK from the contract to the Owner
+     */
+    function withdrawLinkPublisher() external {
+        LinkTokenInterface link = LinkTokenInterface(linkAddress);
+        require(
+            link.transfer(msg.sender, requestPublisherBalance[msg.sender]),
+            "Publisher has no balance"
+        );
+        requestPublisherBalance[msg.sender] = 0;
+        require(requestPublisherBalance[msg.sender] == 0, "Balance should be zero");
     }
 
     /**

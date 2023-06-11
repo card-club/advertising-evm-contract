@@ -8,6 +8,7 @@ const { SHARED_DON_PUBLIC_KEY } = require("../networks");
 const path = require("path");
 const process = require("process");
 const utils = require("../utils");
+const publisherAddress = "0xF4E20531CD11Fb8b70896AA9710FeDbEb9be87c3";
 task(
   "functions-simulate",
   "Simulates an end-to-end fulfillment locally for the CardClub contract"
@@ -102,6 +103,7 @@ task(
 
       // Initiate purchaseAd from the client contract
       const requestTx = await clientContract.purchaseAd(
+        publisherAddress,
         hre.ethers.utils.parseEther("1"),
         request.source,
         request.secrets ?? [],

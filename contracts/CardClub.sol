@@ -166,11 +166,11 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
      */
     function withdrawLinkPublisher() external {
         LinkTokenInterface link = LinkTokenInterface(linkAddress);
+        requestPublisherBalance[msg.sender] = 0;
         require(
             link.transfer(msg.sender, requestPublisherBalance[msg.sender]),
             "Publisher has no balance"
         );
-        requestPublisherBalance[msg.sender] = 0;
         require(
             requestPublisherBalance[msg.sender] == 0,
             "Balance should be zero"

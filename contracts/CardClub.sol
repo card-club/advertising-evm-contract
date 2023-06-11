@@ -140,8 +140,11 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
             if (!success) revert CardClub_refundFailedContactUs();
         } else {
             // Add it to publisher balance
-            unchecked {                
-                requestPublisherBalance[requestPublisherAddress[requestId]] = requestPublisherBalance[requestPublisherAddress[requestId]] +
+            unchecked {
+                requestPublisherBalance[requestPublisherAddress[requestId]] =
+                    requestPublisherBalance[
+                        requestPublisherAddress[requestId]
+                    ] +
                     (requestLinkAmount[requestId] - (LINK_DIVISIBILITY / 2));
             }
         }
@@ -168,7 +171,10 @@ contract CardClub is FunctionsClient, ConfirmedOwner {
             "Publisher has no balance"
         );
         requestPublisherBalance[msg.sender] = 0;
-        require(requestPublisherBalance[msg.sender] == 0, "Balance should be zero");
+        require(
+            requestPublisherBalance[msg.sender] == 0,
+            "Balance should be zero"
+        );
     }
 
     /**

@@ -12,7 +12,7 @@
     "simulate": "npx hardhat functions-simulate"
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
     "@openzeppelin/hardhat-upgrades": "^1.28.0",
     "axios": "^1.4.0",
     "eth-crypto": "^2.6.0",

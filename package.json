@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
-    "@openzeppelin/hardhat-upgrades": "^1.28.0",
+    "@openzeppelin/hardhat-upgrades": "^2.2.0",
     "axios": "^1.4.0",
     "eth-crypto": "^2.6.0",
     "fs": "^0.0.1-security",
